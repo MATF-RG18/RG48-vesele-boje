@@ -15,9 +15,13 @@ static void on_motion(int x, int y);
 static void draw_cannon(float radius,float height);
 float cannon_movement_x;
 float cannon_movement_y;
+
 void draw_circle(float r);
 void set_normal_and_vertex_tire(float u, float v, float r);
 void draw_tire(float r, float h);
+
+
+void draw_ball(float radius);
 
 int windowWidth;
 int windowHeight;
@@ -94,8 +98,28 @@ void on_display(void)
 
     glEnable(GL_DEPTH_TEST);
     draw_cannon(0.2,0.5);
+	draw_ball(0.19);
 
     glutSwapBuffers();
+}
+void draw_ball(float radius) {
+    GLfloat ambient_coeffs[] = { 0.05375, 0.05, 0.06625, 1 };
+    GLfloat diffuse_coeffs[] = { 1.0, 0.37, 0.22525, 1 };
+    GLfloat specular_coeffs[] = {  0.332741, 0.528634, 0.346435, 1 };
+
+    GLfloat shininess = 0.3*128;
+    //Setting material lighting properties
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+	glPushMatrix();
+	glTranslatef(0,0,0);
+        glRotatef(cannon_movement_x, 1, 0, 0);
+        glRotatef(cannon_movement_y, 0, 1, 0);
+	glTranslatef(0,0,0.5);
+	glutSolidSphere(radius,500,500);
+	glPopMatrix();
 }
 static void draw_cannon(float radius, float height){
      //setting the material lighting attributes
@@ -225,8 +249,7 @@ void on_motion(int x, int y){
           cannon_movement_x = 5;
 
       cannon_movement_y = (posX+(windowWidth*1.0)/2)*(-60/(windowWidth*1.0)) + 30;
-	printf("%f",cannon_movement_x);
-	printf("%f",cannon_movement_y);
+
       glutPostRedisplay();
 
 }
