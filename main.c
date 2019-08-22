@@ -6,16 +6,32 @@
 #include <string.h>
 #define EPSILON 0.05
 
-
+const float DEGTORAD = 3.1415769/180.0f; 
 void on_keyboard(unsigned char key, int x, int y);
 void on_display(void);
 void on_reshape(int width, int height);
 void on_timer(int value);
+static void on_mouse(int button, int state, int x, int y);
 static void on_motion(int x, int y);
-static void draw_cannon(float radius,float height);
+void draw_cannon(float radius,float height);
 float cannon_movement_x;
 float cannon_movement_y;
+int animation_ongoing;
+float cannon_ball_x;
+float cannon_ball_y;
+float cannon_ball_z;
+int ispaljena;
+float brzinaY;
+float brzinaZ;
+float brzinaX; //added to make cannon ball movement smoother
 
+//constant which regulates the speed of the cannon ball
+float brzina;
+
+//current cannon ball velocity
+float trenunta_brzinaZ;
+float trenutna_brzinaY;
+float trenutna_brzinaX;
 void draw_circle(float r);
 void set_normal_and_vertex_tire(float u, float v, float r);
 void draw_tire(float r, float h);
@@ -44,12 +60,23 @@ int main(int argc, char **argv){
     glutReshapeFunc(on_reshape);
     glutDisplayFunc(on_display);
     glutPassiveMotionFunc(on_motion);
+    glutMouseFunc(on_mouse);
 
 
     glClearColor(0.7, 0.7, 1, 0);
     glEnable(GL_DEPTH_TEST);
     cannon_movement_x=0;
     cannon_movement_y=0;
+    cannon_ball_x = 0;
+    cannon_ball_y = 0;
+    cannon_ball_z = 0;
+
+    //Ball velocity at the start of the program
+    brzinaZ = 0.0f;
+    brzinaY = 0.0f;
+    brzinaX = 0.0f;
+    ispaljena=0;
+    animation_ongoing=0;
     windowWidth=600;
     windowHeight=600;
     glutMainLoop();
@@ -113,6 +140,7 @@ void draw_ball(float radius) {
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+if(ispaljena==0) {
 	glPushMatrix();
 	glTranslatef(0,0,0);
         glRotatef(cannon_movement_x, 1, 0, 0);
@@ -121,7 +149,14 @@ void draw_ball(float radius) {
 	glutSolidSphere(radius,500,500);
 	glPopMatrix();
 }
-static void draw_cannon(float radius, float height){
+else if (ispaljena==1) {
+	glPushMatrix();
+        glTranslatef(cannon_ball_x, cannon_ball_y, cannon_ball_z+0.5);
+        glutSolidSphere(0.1, 100, 100);
+    glPopMatrix();
+}
+}
+void draw_cannon(float radius, float height){
      //setting the material lighting attributes
     GLfloat ambient_coeffs[] = { 0.05375, 0.05, 0.06625, 1 };
     GLfloat diffuse_coeffs[] = { 0.28275, 0.37, 0.22525, 1 };
@@ -252,4 +287,37 @@ void on_motion(int x, int y){
 
       glutPostRedisplay();
 
+}
+static void on_mouse(int button, int state, int x, int y) {
+	if(button == GLUT_LEFT_BUTTON && !animation_ongoing && state == GLUT_DOWN) {
+		animation_ongoing=1;
+		ispaljena=1;
+          	brzina = 0.2;
+          	brzinaZ = brzina * cos(cannon_movement_x * DEGTORAD) * cos(cannon_movement_y * DEGTORAD);
+          	brzinaY = -brzina* sin(cannon_movement_x * DEGTORAD);
+          	brzinaX = brzina * cos(cannon_movement_x * DEGTORAD) * sin(cannon_movement_y * DEGTORAD);
+
+          	glutTimerFunc(50, on_timer, 0);
+          	glutPostRedisplay();
+}
+}
+
+
+ void on_timer(int value){
+    if(value != 0)
+        return ;
+
+    if(cannon_ball_z > -50){
+        cannon_ball_z += brzinaZ;
+        cannon_ball_y += brzinaY;
+        cannon_ball_x += brzinaX;
+
+}
+    else animation_ongoing=0;
+
+    glutPostRedisplay();
+
+    if(animation_ongoing) {
+        glutTimerFunc(50, on_timer, 0);
+    }
 }
