@@ -23,18 +23,15 @@ float cannon_ball_z;
 int ispaljena;
 float brzinaY;
 float brzinaZ;
-float brzinaX; //added to make cannon ball movement smoother
+float brzinaX;
+float slucajni[15];
 
-//constant which regulates the speed of the cannon ball
 float brzina;
 
-//current cannon ball velocity
-float trenunta_brzinaZ;
-float trenutna_brzinaY;
-float trenutna_brzinaX;
 void draw_circle(float r);
 void set_normal_and_vertex_tire(float u, float v, float r);
 void draw_tire(float r, float h);
+int i;
 
 
 void draw_ball(float radius);
@@ -79,6 +76,13 @@ int main(int argc, char **argv){
     animation_ongoing=0;
     windowWidth=600;
     windowHeight=600;
+    
+    for(i=0;i<15;i++) {
+	double random_broj = rand()/(float)RAND_MAX;
+	printf("%f\n",random_broj);
+	slucajni[i]=random_broj;
+}
+	i=0;
     glutMainLoop();
 
     return 0;
@@ -134,12 +138,24 @@ void draw_ball(float radius) {
     GLfloat diffuse_coeffs[] = { 1.0, 0.37, 0.22525, 1 };
     GLfloat specular_coeffs[] = {  0.332741, 0.528634, 0.346435, 1 };
 
+
+    GLfloat ambient_coeffs1[] = { 0.05375, 0.05, 0.06625, 1 };
+    GLfloat diffuse_coeffs1[] = { 0.0, 1.0, 0.22525, 1 };
+    GLfloat specular_coeffs1[] = {  0.332741, 0.528634, 0.346435, 1 };
+
     GLfloat shininess = 0.3*128;
-    //Setting material lighting properties
+	if(slucajni[i]>0.5){
+
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+	}
+	else   {  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs1);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs1);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs1);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+}
 if(ispaljena==0) {
 	glPushMatrix();
 	glTranslatef(0,0,0);
@@ -299,7 +315,8 @@ static void on_mouse(int button, int state, int x, int y) {
 
           	glutTimerFunc(50, on_timer, 0);
           	glutPostRedisplay();
-}
+	}
+	
 }
 
 
@@ -307,13 +324,25 @@ static void on_mouse(int button, int state, int x, int y) {
     if(value != 0)
         return ;
 
-    if(cannon_ball_z > -50){
+    if( cannon_ball_z <12){
         cannon_ball_z += brzinaZ;
         cannon_ball_y += brzinaY;
         cannon_ball_x += brzinaX;
+	
 
-}
-    else animation_ongoing=0;
+	}
+    else {
+	ispaljena=0;
+        animation_ongoing = 0;
+        cannon_ball_z = 0;
+        cannon_ball_y = 0;
+        cannon_ball_x = 0;
+
+        brzinaZ = 0;
+        brzinaY = 0;
+        brzinaX = 0;
+	i++;
+	}
 
     glutPostRedisplay();
 
