@@ -4,23 +4,37 @@
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
+
 #define EPSILON 0.05
 
-const float DEGTORAD = 3.1415769/180.0f; 
+const float DEGTORAD = 3.1415769/180.0f;
+
+ 
 void on_keyboard(unsigned char key, int x, int y);
 void on_display(void);
 void on_reshape(int width, int height);
 void on_timer(int value);
 static void on_mouse(int button, int state, int x, int y);
 static void on_motion(int x, int y);
+
+
+void draw_ball(float radius);
 void draw_cannon(float radius,float height);
+void draw_circle(float r);
+void set_normal_and_vertex_tire(float u, float v, float r);
+void draw_tire(float r, float h);
+
+
 float cannon_movement_x;
 float cannon_movement_y;
 int animation_ongoing;
 float cannon_ball_x;
 float cannon_ball_y;
 float cannon_ball_z;
+
+
 int ispaljena;
+float brzina;
 float brzinaY;
 float brzinaZ;
 float brzinaX;
@@ -28,13 +42,7 @@ float slucajni[15];
 
 float brzina;
 
-void draw_circle(float r);
-void set_normal_and_vertex_tire(float u, float v, float r);
-void draw_tire(float r, float h);
 int i;
-
-
-void draw_ball(float radius);
 
 int windowWidth;
 int windowHeight;
@@ -46,7 +54,6 @@ int main(int argc, char **argv){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
        
-    //glutInitWindowSize(500, 500);
     glutInitWindowSize(600, 600);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("Vesele boje");
@@ -68,21 +75,22 @@ int main(int argc, char **argv){
     cannon_ball_y = 0;
     cannon_ball_z = 0;
 
-    //Ball velocity at the start of the program
     brzinaZ = 0.0f;
     brzinaY = 0.0f;
     brzinaX = 0.0f;
+
     ispaljena=0;
     animation_ongoing=0;
+
+
     windowWidth=600;
     windowHeight=600;
     
     for(i=0;i<15;i++) {
 	double random_broj = rand()/(float)RAND_MAX;
-	printf("%f\n",random_broj);
 	slucajni[i]=random_broj;
 }
-	i=0;
+    i=0;
     glutMainLoop();
 
     return 0;
@@ -90,9 +98,23 @@ int main(int argc, char **argv){
 void on_keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
-        case 27:
-            exit(0);
-            break;
+    	case 27:
+        	exit(0);
+        	break;
+	case 'r':
+	case 'R':
+	//Resetovanje loptice
+		ispaljena=0;
+        	animation_ongoing = 0;
+        	cannon_ball_z = 0;
+        	cannon_ball_y = 0;
+        	cannon_ball_x = 0;
+
+        	brzinaZ = 0;
+        	brzinaY = 0;
+        	brzinaX = 0;
+		i++;
+	break;
 }
 
 }
@@ -173,50 +195,41 @@ else if (ispaljena==1) {
 }
 }
 void draw_cannon(float radius, float height){
-     //setting the material lighting attributes
     GLfloat ambient_coeffs[] = { 0.05375, 0.05, 0.06625, 1 };
     GLfloat diffuse_coeffs[] = { 0.28275, 0.37, 0.22525, 1 };
     GLfloat specular_coeffs[] = {  0.332741, 0.528634, 0.346435, 1 };
 
     GLfloat shininess = 0.3*128;
-    //Setting material lighting properties
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 
 
-    float x = 0.0;  //x and y are polar coordinates
+    float x = 0.0;  //x i y polarne koordinate
     float y = 0.0;
-    float angle = 0.0; //initial angle which will be used for calculating polar coordinates
-    float angle_step = 0.005; //value for increasing of the angle in the loop
-
-    /*
-     The tube of the cylinder is drawn by drawing 2 vertices in each iteration, and connecting
-     them in a quad strip.
-     When the loop is exited we need to draw two 2 more vertices to complete the tube, since
-     the angle will never be exactly equal to 2pi, so the last strip needs to be drawn explicitly.
-     */
+    float angle = 0.0; //ugao
+    float angle_step = 0.005; //pomeraj ugla
 
 
 
 
 
-    //Rotations for aiming
+    //Rotacija za pomeranje topa
     glPushMatrix();
         glRotatef(cannon_movement_x, 1, 0, 0);
         glRotatef(cannon_movement_y, 0, 1, 0);
-        //begin to draw cylinder from quad stripes
+        //Crtanje topa
         glBegin(GL_QUAD_STRIP);
             while(angle < 2*M_PI){
-                x = radius*cos(angle);//x polar coordinate
-                y = radius*sin(angle);//y polar coordinate
-                glNormal3f(x / radius, y / radius, 0.0); //normal for each vertex (important for lighting)
-                glVertex3f(x, y, height);//draw upper vertex
-                glVertex3f(x, y, 0.0); // draw lower vertex
-                angle += angle_step; // increase angle
+                x = radius*cos(angle);
+                y = radius*sin(angle);
+                glNormal3f(x / radius, y / radius, 0.0); 
+                glVertex3f(x, y, height);
+                glVertex3f(x, y, 0.0); 
+                angle += angle_step; 
             }
-            glVertex3f(radius, 0.0, height); // draw last two vertices
+            glVertex3f(radius, 0.0, height);
             glVertex3f(radius, 0.0, 0.0);
     glEnd();
 
@@ -306,6 +319,7 @@ void on_motion(int x, int y){
 }
 static void on_mouse(int button, int state, int x, int y) {
 	if(button == GLUT_LEFT_BUTTON && !animation_ongoing && state == GLUT_DOWN) {
+		// ispaljivanje loptice
 		animation_ongoing=1;
 		ispaljena=1;
           	brzina = 0.2;
@@ -324,14 +338,16 @@ static void on_mouse(int button, int state, int x, int y) {
     if(value != 0)
         return ;
 
-    if( cannon_ball_z <12){
+    if( cannon_ball_z <12){	
+	//ispaljivanje loptice
         cannon_ball_z += brzinaZ;
         cannon_ball_y += brzinaY;
         cannon_ball_x += brzinaX;
 	
 
 	}
-    else {
+    else {	
+	//vracanje loptice u top
 	ispaljena=0;
         animation_ongoing = 0;
         cannon_ball_z = 0;
@@ -341,6 +357,7 @@ static void on_mouse(int button, int state, int x, int y) {
         brzinaZ = 0;
         brzinaY = 0;
         brzinaX = 0;
+	//povecanje brojaca da bi se manjala boja loptice
 	i++;
 	}
 
