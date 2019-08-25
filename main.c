@@ -50,7 +50,7 @@ int i;
 int windowWidth;
 int windowHeight;
 
-
+extern Lopta lopte[MAX_META];
 int main(int argc, char **argv){
 
     /* Inicijalizacija gluta */
@@ -359,7 +359,33 @@ static void on_mouse(int button, int state, int x, int y) {
         cannon_ball_z += brzinaZ;
         cannon_ball_y += brzinaY;
         cannon_ball_x += brzinaX;
-	
+	for(int j = 0; j < MAX_META; j++){
+            if(cannon_ball_z  <= lopte[j].z + 0.2
+                && cannon_ball_z >= lopte[j].z - 0.2
+
+                && cannon_ball_y <= 0 + 0.2
+                && cannon_ball_y >= 0 - 0.2
+
+                && cannon_ball_x >= lopte[j].x - 4*0.2
+                && cannon_ball_x <= lopte[j].x + 4*0.2){
+			ispaljena=0;
+        		animation_ongoing = 0;
+        		cannon_ball_z = 0;
+        		cannon_ball_y = 0;
+        		cannon_ball_x = 0;
+		
+       	brzinaZ = 0;
+        brzinaY = 0;
+        brzinaX = 0;
+	if((lopte[j].boja<0.3 && slucajni[i]<0.3) || 
+			    (lopte[j].boja>=0.3 && slucajni[i]>=0.3 && lopte[j].boja<0.6 && slucajni[i]<0.6) ||
+			    (lopte[j].boja>=0.6 && slucajni[i]>=0.6)){
+				lopte[j].x=-10;
+	}
+	i++;
+              					
+	}
+}
 
 	}
     else {	
