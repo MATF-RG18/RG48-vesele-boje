@@ -24,7 +24,7 @@ void draw_cannon(float radius,float height);
 void draw_circle(float r);
 void set_normal_and_vertex_tire(float u, float v, float r);
 void draw_tire(float r, float h);
-
+void provera_sudara ();
 
 float cannon_movement_x;
 float cannon_movement_y;
@@ -169,17 +169,28 @@ void draw_ball(float radius) {
     GLfloat diffuse_coeffs1[] = { 0.0, 1.0, 0.22525, 1 };
     GLfloat specular_coeffs1[] = {  0.332741, 0.528634, 0.346435, 1 };
 
+    GLfloat ambient_coeffs2[] = { 0.05375, 0.05, 0.06625, 1 };
+    GLfloat diffuse_coeffs2[] = { 0.0, 1.0, 1.0, 1 };
+    GLfloat specular_coeffs2[] = {  0.332741, 0.528634, 0.346435, 1 };
+
     GLfloat shininess = 0.3*128;
-	if(slucajni[i]>0.5){
+	if(slucajni[i]<0.3){
 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 	}
-	else   {  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs1);
+	else if(slucajni[i]>=0.3 && slucajni[i]<0.6)  { 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs1);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs1);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs1);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+}
+	else {
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs2);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs2);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs2);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 }
 if(ispaljena==0) {
@@ -376,7 +387,20 @@ static void on_mouse(int button, int state, int x, int y) {
     if(value != 0)
         return ;
     azuriraj_mete();
+    provera_sudara();
     glutTimerFunc(17, on_timer, 0);
 	if(animation_ongoing1)
 	glutTimerFunc(17, on_timer1, 0);
+}
+void provera_sudara () {
+	for(int i=0;i<MAX_META; i++) {
+		if (cannon_ball_z==lopte[i].z) {
+			lopte[i].z=100;
+			ispaljena=0;
+        		animation_ongoing = 0;
+        		cannon_ball_z = 0;
+        		cannon_ball_y = 0;
+        		cannon_ball_x = 0;
+		}
+	}
 }

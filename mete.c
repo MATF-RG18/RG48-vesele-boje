@@ -43,19 +43,33 @@ GLfloat ambient_coeffs[] = { 0.05375, 0.05, 0.06625, 1 };
     GLfloat diffuse_coeffs1[] = { 0.0, 1.0, 0.22525, 1 };
     GLfloat specular_coeffs1[] = {  0.332741, 0.528634, 0.346435, 1 };
 
+
+    GLfloat ambient_coeffs2[] = { 0.05375, 0.05, 0.06625, 1 };
+    GLfloat diffuse_coeffs2[] = { 0.0, 1.0, 1.0, 1 };
+    GLfloat specular_coeffs2[] = {  0.332741, 0.528634, 0.346435, 1 };
+
     GLfloat shininess = 0.3*128;
 
     for (int i = 0; i < MAX_META; i++) {
 	for(int j=0;j<4;j++) {
-	if(lopte[i].boja>0.5){
+
+	if(lopte[i].boja<0.3){
+
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 	}
-	else   {  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs1);
+	else if(lopte[i].boja>=0.3 && lopte[i].boja<0.6)  { 
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs1);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs1);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs1);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+}
+	else {
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs2);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_coeffs2);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_coeffs2);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 }
        glPushMatrix();
