@@ -16,7 +16,7 @@ typedef struct lopta {
 Lopta napravi_loptu();
 void nacrtaj_loptu();
 void inicijalizacija_meta();
-void azuriraj_meta();
+void azuriraj_mete();
 void nacrtaj_mete();
 
 #endif

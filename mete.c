@@ -15,7 +15,7 @@ Lopta napravi_loptu() {
 
 
 
-void inicijalizacija_prepreka() {
+void inicijalizacija_meta() {
     for(int i = 0; i < MAX_PREPREKA; i++) {
             lopte[i] = napravi_loptu();
             lopte[i].z = lopte[i].z +korak_prepreke * i ;
@@ -23,7 +23,7 @@ void inicijalizacija_prepreka() {
     }
 }
 
-void azuriraj_prepreke() {
+void azuriraj_mete() {
     int i;
     for (i = 0; i < MAX_PREPREKA; i++) {
             lopte[i].z -= brzina_prepreke;
@@ -31,15 +31,9 @@ void azuriraj_prepreke() {
     }
 }
 
-void nacrtaj_loptu(Lopta l) {
-    glPushMatrix();
-        glTranslatef(l.x, 0,l.z );
-        glutSolidSphere(0.15, 25, 25);
-    glPopMatrix();
-}
 
 
-void nacrtaj_prepreke() {
+void nacrtaj_mete() {
 GLfloat ambient_coeffs[] = { 0.05375, 0.05, 0.06625, 1 };
     GLfloat diffuse_coeffs[] = { 1.0, 0.37, 0.22525, 1 };
     GLfloat specular_coeffs[] = {  0.332741, 0.528634, 0.346435, 1 };

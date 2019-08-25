@@ -4,7 +4,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
-
+#include "mete.h"
 #define EPSILON 0.05
 
 const float DEGTORAD = 3.1415769/180.0f;
@@ -14,6 +14,7 @@ void on_keyboard(unsigned char key, int x, int y);
 void on_display(void);
 void on_reshape(int width, int height);
 void on_timer(int value);
+void on_timer1(int value);
 static void on_mouse(int button, int state, int x, int y);
 static void on_motion(int x, int y);
 
@@ -28,6 +29,7 @@ void draw_tire(float r, float h);
 float cannon_movement_x;
 float cannon_movement_y;
 int animation_ongoing;
+int animation_ongoing1;
 float cannon_ball_x;
 float cannon_ball_y;
 float cannon_ball_z;
@@ -81,6 +83,8 @@ int main(int argc, char **argv){
 
     ispaljena=0;
     animation_ongoing=0;
+    animation_ongoing1=0;
+
 
 
     windowWidth=600;
@@ -91,6 +95,7 @@ int main(int argc, char **argv){
 	slucajni[i]=random_broj;
 }
     i=0;
+    inicijalizacija_meta();
     glutMainLoop();
 
     return 0;
@@ -115,6 +120,13 @@ void on_keyboard(unsigned char key, int x, int y)
         	brzinaX = 0;
 		i++;
 	break;
+    	case 'g':
+	case 'G': 
+        animation_ongoing1 = 1;
+        glutTimerFunc(17, on_timer1, 0);
+	glutPostRedisplay();
+        break;
+
 }
 
 }
@@ -152,6 +164,7 @@ void on_display(void)
     glEnable(GL_DEPTH_TEST);
     draw_cannon(0.2,0.5);
 	draw_ball(0.19);
+	nacrtaj_mete();
 
     glutSwapBuffers();
 }
@@ -184,7 +197,7 @@ if(ispaljena==0) {
         glRotatef(cannon_movement_x, 1, 0, 0);
         glRotatef(cannon_movement_y, 0, 1, 0);
 	glTranslatef(0,0,0.5);
-	glutSolidSphere(radius,500,500);
+	glutSolidSphere(radius,25,25);
 	glPopMatrix();
 }
 else if (ispaljena==1) {
@@ -366,4 +379,13 @@ static void on_mouse(int button, int state, int x, int y) {
     if(animation_ongoing) {
         glutTimerFunc(50, on_timer, 0);
     }
+}
+
+ void on_timer1(int value){
+    if(value != 0)
+        return ;
+    azuriraj_mete();
+    glutTimerFunc(17, on_timer, 0);
+	if(animation_ongoing1)
+	glutTimerFunc(17, on_timer1, 0);
 }
