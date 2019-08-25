@@ -141,13 +141,6 @@ void on_reshape(int width, int height)
 void on_display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    GLfloat light_position[] = { 100, 100, 100, 0 };
-    //Ambijentalna boja svetla
-    GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1 };
-    //Difuzna boja svetla
-    GLfloat light_diffuse[] = { 0.7, 0.7, 0.7, 1 };
-    //Spekularna boja svetla
-    GLfloat light_specular[] = { 0.9, 0.9, 0.9, 1 };
 
 
     glMatrixMode(GL_MODELVIEW);
@@ -156,15 +149,13 @@ void on_display(void)
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 
     glEnable(GL_DEPTH_TEST);
     draw_cannon(0.2,0.5);
 	draw_ball(0.19);
 	nacrtaj_mete();
+    glDisable(GL_LIGHTING);
+    glDisable(GL_LIGHT0);
 
     glutSwapBuffers();
 }

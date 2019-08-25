@@ -4,7 +4,7 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 
-#define MAX_PREPREKA 15
+#define MAX_META 15
 
 typedef struct lopta {
     float x;

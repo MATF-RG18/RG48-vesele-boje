@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "prepreke.h"
-const float korak_prepreke = 3;
-const float brzina_prepreke = 0.02;
-Lopta lopte[MAX_PREPREKA];
+#include "mete.h"
+const float korak_mete = 3;
+const float brzina_mete = 0.02;
+Lopta lopte[MAX_META];
 
 Lopta napravi_loptu() {
     Lopta tmp_lopta;
@@ -16,17 +16,17 @@ Lopta napravi_loptu() {
 
 
 void inicijalizacija_meta() {
-    for(int i = 0; i < MAX_PREPREKA; i++) {
+    for(int i = 0; i < MAX_META; i++) {
             lopte[i] = napravi_loptu();
-            lopte[i].z = lopte[i].z +korak_prepreke * i ;
+            lopte[i].z = lopte[i].z +korak_mete * i ;
 		
     }
 }
 
 void azuriraj_mete() {
     int i;
-    for (i = 0; i < MAX_PREPREKA; i++) {
-            lopte[i].z -= brzina_prepreke;
+    for (i = 0; i < MAX_META; i++) {
+            lopte[i].z -= brzina_mete;
       
     }
 }
@@ -45,7 +45,7 @@ GLfloat ambient_coeffs[] = { 0.05375, 0.05, 0.06625, 1 };
 
     GLfloat shininess = 0.3*128;
 
-    for (int i = 0; i < MAX_PREPREKA; i++) {
+    for (int i = 0; i < MAX_META; i++) {
 	for(int j=0;j<4;j++) {
 	if(lopte[i].boja>0.5){
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_coeffs);
