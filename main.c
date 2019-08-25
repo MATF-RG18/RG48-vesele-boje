@@ -6,6 +6,7 @@
 #include <string.h>
 #include "mete.h"
 #define EPSILON 0.05
+extern Lopta lopte[MAX_META];
 
 const float DEGTORAD = 3.1415769/180.0f;
 
@@ -24,7 +25,7 @@ void draw_cannon(float radius,float height);
 void draw_circle(float r);
 void set_normal_and_vertex_tire(float u, float v, float r);
 void draw_tire(float r, float h);
-void provera_sudara ();
+
 
 float cannon_movement_x;
 float cannon_movement_y;
@@ -123,7 +124,7 @@ void on_keyboard(unsigned char key, int x, int y)
     	case 'g':
 	case 'G': 
         animation_ongoing1 = 1;
-        glutTimerFunc(17, on_timer1, 0);
+        glutTimerFunc(50, on_timer1, 0);
 	glutPostRedisplay();
         break;
 
@@ -337,12 +338,12 @@ static void on_mouse(int button, int state, int x, int y) {
 		// ispaljivanje loptice
 		animation_ongoing=1;
 		ispaljena=1;
-          	brzina = 0.2;
+          	brzina = 0.1;
           	brzinaZ = brzina * cos(cannon_movement_x * DEGTORAD) * cos(cannon_movement_y * DEGTORAD);
           	brzinaY = -brzina* sin(cannon_movement_x * DEGTORAD);
           	brzinaX = brzina * cos(cannon_movement_x * DEGTORAD) * sin(cannon_movement_y * DEGTORAD);
 
-          	glutTimerFunc(50, on_timer, 0);
+          	glutTimerFunc(100, on_timer, 0);
           	glutPostRedisplay();
 	}
 	
@@ -379,7 +380,7 @@ static void on_mouse(int button, int state, int x, int y) {
     glutPostRedisplay();
 
     if(animation_ongoing) {
-        glutTimerFunc(50, on_timer, 0);
+        glutTimerFunc(100, on_timer, 0);
     }
 }
 
@@ -387,20 +388,7 @@ static void on_mouse(int button, int state, int x, int y) {
     if(value != 0)
         return ;
     azuriraj_mete();
-    provera_sudara();
-    glutTimerFunc(17, on_timer, 0);
+    glutTimerFunc(50, on_timer, 0);
 	if(animation_ongoing1)
-	glutTimerFunc(17, on_timer1, 0);
-}
-void provera_sudara () {
-	for(int i=0;i<MAX_META; i++) {
-		if (cannon_ball_z==lopte[i].z) {
-			lopte[i].z=100;
-			ispaljena=0;
-        		animation_ongoing = 0;
-        		cannon_ball_z = 0;
-        		cannon_ball_y = 0;
-        		cannon_ball_x = 0;
-		}
-	}
+	glutTimerFunc(50, on_timer1, 0);
 }
