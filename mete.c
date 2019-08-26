@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include "mete.h"
-const float korak_mete = 3;
-const float brzina_mete = 0.02;
+const float korak_mete = 2;
+const float brzina_mete = 0.04;
 Lopta lopte[MAX_META];
 
 Lopta napravi_loptu() {
     Lopta tmp_lopta;
-    tmp_lopta.x =  -5 +rand() % 10;
+    tmp_lopta.x = -4 +rand() % 7;
     tmp_lopta.z = 10;
     tmp_lopta.boja= rand()/(float)RAND_MAX;;
 

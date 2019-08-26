@@ -27,6 +27,8 @@ void set_normal_and_vertex_tire(float u, float v, float r);
 void draw_tire(float r, float h);
 
 
+void ispisi_tekst(char * tekst, int x, int y, float r, float g, float b, int sirina_ekrana, int duzina_ekrana);
+
 float cannon_movement_x;
 float cannon_movement_y;
 int animation_ongoing;
@@ -45,10 +47,15 @@ float slucajni[15];
 
 float brzina;
 
+
+
+int poeni=0;
 int i;
 
 int windowWidth;
 int windowHeight;
+
+int k=0;
 
 extern Lopta lopte[MAX_META];
 int main(int argc, char **argv){
@@ -60,7 +67,7 @@ int main(int argc, char **argv){
     glutInitWindowSize(600, 600);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("Vesele boje");
-    
+    glutFullScreen();
 	
 
     glutKeyboardFunc(on_keyboard);
@@ -88,10 +95,10 @@ int main(int argc, char **argv){
 
 
 
-    windowWidth=600;
-    windowHeight=600;
+    windowWidth=1366;
+    windowHeight=768;
     
-    for(i=0;i<15;i++) {
+    for(i=0;i<255;i++) {
 	double random_broj = rand()/(float)RAND_MAX;
 	slucajni[i]=random_broj;
 }
@@ -123,8 +130,9 @@ void on_keyboard(unsigned char key, int x, int y)
 	break;
     	case 'g':
 	case 'G': 
+	k=1;
         animation_ongoing1 = 1;
-        glutTimerFunc(50, on_timer1, 0);
+        glutTimerFunc(30, on_timer1, 0);
 	glutPostRedisplay();
         break;
 
@@ -155,8 +163,23 @@ void on_display(void)
     draw_cannon(0.2,0.5);
 	draw_ball(0.19);
 	nacrtaj_mete();
+	
     glDisable(GL_LIGHTING);
     glDisable(GL_LIGHT0);
+	if(k==0) {
+		char str2[255];
+		char str3[255];
+		ispisi_tekst("Da pokrenete igricu stisnite G ",windowWidth/2 - strlen(str2) - 120,
+					 windowHeight/2-10,1,0,0,windowWidth,windowHeight);
+		ispisi_tekst("Da dodate lopticu u top stisnite k",windowWidth/2  - strlen(str3) - 120,
+					 windowHeight/2+40,1,0,0,windowWidth,windowHeight);
+	}
+	char str[255];
+   	sprintf(str, "Broj loptica: %d / 255", i);
+	ispisi_tekst(str,2,2,1,0,0,windowWidth,windowHeight);
+	char str1[255];
+   	sprintf(str1, "Broj poena: %d", poeni);
+	ispisi_tekst(str1,windowWidth - strlen(str1) - 210,2,1,0,0,windowWidth,windowHeight);
 
     glutSwapBuffers();
 }
@@ -306,18 +329,6 @@ void draw_tire(float r, float h)
     glPopMatrix();
 }
 void on_motion(int x, int y){
-      //Idea for this function is that we first find position X and Y where
-      //posX represents pixel distance from the center of the screen in x coordinates
-      //and posY represents pixel distance from the center of the screen in y coordinates
-      //because of that our posX and posY are in interval [-height/2, height/2] for Y
-      // since the biggest distance from the center of the screen is height/2 and smallest is -height/2
-      // in the same respect posX is in interval [-width/2, width/2];
-      //we want our cannon to rotate for -45 degrees around y axis when our mouse is on the left edge of the screen
-      // and to rotate for 45 degrees when our mouse
-      // is on the right edge of the screen
-      //In the same manner we want our cannon to rotate around x axis for -30 degrees when our mouse is on the top
-      //edge of the screen and for 30 degrees when our mouse is in the bottom of the screen.
-      // Because of that we only need linear mapping between two intervals.
 
       double posY = y - windowHeight/2; // scaling [-height/2, height/2] -> [-45, 45]
       double posX = x - windowWidth/2; // scaling [-width/2, width/2] -> [30, -30]
@@ -325,8 +336,7 @@ void on_motion(int x, int y){
       // f(x) = (x-a) * ((d-c) / (b-a)) + c , where f(a) = c, f(b) = d;
 
       cannon_movement_x = (posY+(windowHeight*1.0)/2)*(90/(1.0*windowHeight)) - 45;
-      if(cannon_movement_x > 5)
-          cannon_movement_x = 5;
+     
 
       cannon_movement_y = (posX+(windowWidth*1.0)/2)*(-60/(windowWidth*1.0)) + 30;
 
@@ -366,22 +376,24 @@ static void on_mouse(int button, int state, int x, int y) {
                 && cannon_ball_y <= 0 + 0.2
                 && cannon_ball_y >= 0 - 0.2
 
-                && cannon_ball_x >= lopte[j].x - 4*0.2
-                && cannon_ball_x <= lopte[j].x + 4*0.2){
+                && cannon_ball_x >= lopte[j].x - 0.2
+                && cannon_ball_x <= lopte[j].x + 5*0.2){
 			ispaljena=0;
         		animation_ongoing = 0;
         		cannon_ball_z = 0;
         		cannon_ball_y = 0;
         		cannon_ball_x = 0;
 		
-       	brzinaZ = 0;
-        brzinaY = 0;
-        brzinaX = 0;
+       			brzinaZ = 0;
+       			brzinaY = 0;
+        		brzinaX = 0;
 	if((lopte[j].boja<0.3 && slucajni[i]<0.3) || 
 			    (lopte[j].boja>=0.3 && slucajni[i]>=0.3 && lopte[j].boja<0.6 && slucajni[i]<0.6) ||
 			    (lopte[j].boja>=0.6 && slucajni[i]>=0.6)){
 				lopte[j].x=-10;
+				poeni+=100;
 	}
+	else  poeni-=50;
 	i++;
               					
 	}
@@ -401,6 +413,7 @@ static void on_mouse(int button, int state, int x, int y) {
         brzinaX = 0;
 	//povecanje brojaca da bi se manjala boja loptice
 	i++;
+	poeni-=50;
 	}
 
     glutPostRedisplay();
@@ -414,7 +427,35 @@ static void on_mouse(int button, int state, int x, int y) {
     if(value != 0)
         return ;
     azuriraj_mete();
-    glutTimerFunc(50, on_timer, 0);
+    glutTimerFunc(30, on_timer, 0);
 	if(animation_ongoing1)
-	glutTimerFunc(50, on_timer1, 0);
+	glutTimerFunc(30, on_timer1, 0);
+}
+void ispisi_tekst(char * tekst, int x, int y, float r, float g, float b, int sirina_ekrana, int duzina_ekrana)
+{
+	glDisable(GL_LIGHTING);
+
+        glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+        glLoadIdentity();
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glColor4f(r, g, b, 1.0 );
+	glOrtho(0, sirina_ekrana, 0, duzina_ekrana, -1, 1);
+	
+	glRasterPos2f(x, y);
+
+	int len= strlen(tekst);
+	for (int i = 0; i < len; i++) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, tekst[i]);
+		}
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 }
