@@ -6,6 +6,6 @@ ___
 
 ### :video_game: Komande igrice:
 Igrica se pokrece na<kbd>G</kbd> <br>
-Top se pomera pomeranjem misa a loptica se ispaljuje na levi klik
-Boja loptice u topu se menja na <kbd>K</kbd>
+Top se pomera pomeranjem misa a loptica se ispaljuje na levi klik<br>
+Boja loptice u topu se menja na <kbd>K</kbd> <br>
 Na <kbd>ESC</kbd> se izlazi iz igrice 
