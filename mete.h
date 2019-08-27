@@ -10,6 +10,7 @@ typedef struct lopta {
     float x;
     float z;
     float boja;
+    int prosla;
 } Lopta;
 
 
